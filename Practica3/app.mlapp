@@ -1,0 +1,123 @@
+classdef MejorVecinoApp < matlab.apps.AppBase
+
+    % Propiedades que corresponden a componentes UI
+    properties (Access = private)
+        UIFigure               matlab.ui.Figure
+        CargarArchivoButton    matlab.ui.control.Button
+        ResultadoTextArea      matlab.ui.control.TextArea
+    end
+
+    methods (Access = private)
+
+        % Código que se ejecuta al presionar el botón "Cargar Archivo"
+        function cargarArchivoButtonPushed(app, ~)
+            [archivo, ruta] = uigetfile('*.txt', 'Seleccionar un archivo de texto');
+            if archivo
+                archivoCompleto = fullfile(ruta, archivo);
+                fid = dlmread(archivoCompleto);
+                Dij = fid(:, 2:2:end);
+                Dij = Dij(2:end, :);
+                num_tareas = size(Dij, 1);
+                orden = randperm(num_tareas);
+                mejor_solucion = app.Evaluar(orden, Dij);
+                mejor_orden = orden;
+                Vecino_mejor_Encontrado = true;
+                contador = 0;
+                contador_vecinos = 0;
+                n = length(orden);
+
+                while Vecino_mejor_Encontrado
+                    Vecino_mejor_Encontrado = false;
+                    orden_a_cambiar = mejor_orden;
+                    for i = 1:n - 1
+                        for j = i + 1:n
+                            orden = orden_a_cambiar;
+                            contador_vecinos = contador_vecinos + 1;
+                            A = orden(i);
+                            B = orden(j);
+                            orden(i) = B;
+                            orden(j) = A;
+                            solucion = app.Evaluar(orden, Dij);
+                            if solucion < mejor_solucion
+                                mejor_solucion = solucion;
+                                mejor_orden = orden;
+                                Vecino_mejor_Encontrado = true;
+                            end
+                        end
+                    end
+                    contador = contador + 1;
+                end
+
+                resultado = {'La mejor solución encontrada es el orden :', mat2str(mejor_orden), ...
+                    ' con tiempo : ', num2str(mejor_solucion), ...
+                    ['Se han explorado ', mat2str(contador), ' veces los vecinos', ...
+                    ' (Un total de ', mat2str(contador_vecinos), ' vecinos)']};
+                app.ResultadoTextArea.Value = resultado;
+            end
+        end
+
+        % Función para evaluar el orden de las tareas
+        function max_tiempo = Evaluar(app, orden, Dij)
+            n = length(orden); % Número de tareas
+            m = size(Dij, 2);  % Número de máquinas
+            tiempos_maquinas = zeros(1, m);
+
+            for i = 1:n
+                tarea = orden(i);
+                for j = 1:m
+                    if j == 1
+                        tiempos_maquinas(j) = tiempos_maquinas(j) + Dij(tarea, j);
+                    else
+                        tiempos_maquinas(j) = max(tiempos_maquinas(j), tiempos_maquinas(j - 1));
+                        tiempos_maquinas(j) = tiempos_maquinas(j) + Dij(tarea, j);
+                    end
+                end
+            end
+
+            max_tiempo = max(tiempos_maquinas);
+        end
+    end
+
+    % Código que crea la App
+    methods (Access = public)
+
+        % Creación y configuración de componentes
+        function createComponents(app)
+
+            % Crear UIFigure
+            app.UIFigure = uifigure('Name', 'MejorVecinoApp');
+            app.UIFigure.Position = [100, 100, 640, 480];
+
+            % Crear CargarArchivoButton
+            app.CargarArchivoButton = uibutton(app.UIFigure, 'push');
+            app.CargarArchivoButton.ButtonPushedFcn = createCallbackFcn(app, @cargarArchivoButtonPushed, true);
+            app.CargarArchivoButton.Position = [267, 408, 104, 29];
+            app.CargarArchivoButton.Text = 'Cargar Archivo';
+
+            % Crear ResultadoTextArea
+            app.ResultadoTextArea = uitextarea(app.UIFigure);
+            app.ResultadoTextArea.Editable = 'off';
+            app.ResultadoTextArea.Position = [17, 31, 606, 370];
+        end
+    end
+
+    % App constructor y el método principal
+    methods (Access = public)
+
+        % Constructor de la app
+        function app = MejorVecinoApp
+
+            % Crear y configurar componentes
+            createComponents(app)
+
+            % Configurar la figura
+            app.UIFigure.Name = 'Mejor Vecino App';
+            app.UIFigure.Resize = 'off';
+        end
+
+        % Ejecutar la app
+        function run(app)
+            app.UIFigure.Visible = 'on';
+        end
+    end
+end
