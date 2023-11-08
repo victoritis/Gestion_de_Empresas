@@ -4,7 +4,7 @@ clear;
 %%%%%%%%%%%%%%%%%%%   EL MEJOR VECINO   %%%%%%%%%%%%%%%%%%%%%%
 
 % Nombre del archivo de texto que deseas abrir
-nombreArchivo = 'Doc1.txt';
+nombreArchivo = 'Doc5.txt';
 
 % Intenta abrir el archivo en modo de lectura
 fid = dlmread(nombreArchivo);
@@ -24,7 +24,7 @@ num_tareas = size(Dij, 1);
 
 %Generar permutacion de n a num_tareas
 %orden = randperm(num_tareas);
-orden = [6     3    11     7     8     5     1     2     4     9    10]
+orden = [ 5     6     3     8     4     7     2     1]
 %Generamos la primera iteracion
 mejor_solucion = Evaluar(orden,Dij);
 mejor_orden = orden;

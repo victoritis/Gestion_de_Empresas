@@ -23,20 +23,22 @@ disp(Dij);
 num_tareas = size(Dij, 1);
 
 %Generar permutacion de n a num_tareas
-orden = [6     3    11     7     8     5     1     2     4     9    10]
+orden = randperm(num_tareas); 
+
 %Generamos la primera iteracion
 mejor_solucion = Evaluar(orden,Dij);
 mejor_orden = orden;
+
 disp('EJECUTANDO ALGORITMO RECOCIDO SIMULADO');
 disp(['Orden generado aleatoriamente : ', mat2str(orden),' con tiempo : ', mat2str(mejor_solucion)]);
 
 
 T0 = 1000;   %temperatura inicial
-Tf = 0.00001; %temperatura final
+Tf = 0.0000001; %temperatura final
 reduccion = 0.99;  %reduccion de alfa y
 n = length(orden); % Número de tareas
 sol_act = orden;
-e = exp(1);  %para la funcion probabilidad de aceptación de solucion peor   %%%%QUE DEBERIA VALER???????????????????????????????????????????????????????????????????????????????????'
+e = exp(1);  %para la funcion probabilidad de aceptación de solucion peor  
 L = 100;
 T = T0;
 
@@ -74,9 +76,10 @@ T = alfa(T, reduccion);
 
 end
 
+orden_recocido = sol_act;
 mejor_solucion = Evaluar(sol_act, Dij);
 disp(['La mejor solucion encontrada es el orden : ',mat2str(sol_act),' con tiempo : ' ,num2str(mejor_solucion)]);
-
+disp(['  ']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                  % APLICAMOS BUSQUEDA LOCAL DEL MEJOR VECINO %
 %Generamos la primera iteracion
@@ -116,8 +119,10 @@ end
 
 disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
 disp(['Se han explorado ',mat2str(contador),' veces los vecinos', '(Un total de ',mat2str(contador_vecinos), ' vecinos)' ]);
-
-
+disp(['  ']);
+if mejor_orden == orden_recocido
+    disp(['El algoritmo de busqueda local no implementa ninguna mejora sobre la solucion del recocido simulado para este caso']);
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,10 +1,10 @@
 clear;
 
 
-%%%%%%%%%%%%%%%%%%%   EL PRIMER MEJOR VECINO   %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%   RECOCIDO SIMULADO   %%%%%%%%%%%%%%%%%%%%%%
 
 % Nombre del archivo de texto que deseas abrir
-nombreArchivo = 'Doc5.txt';
+nombreArchivo = 'Doc1.txt';
 
 % Intenta abrir el archivo en modo de lectura
 fid = dlmread(nombreArchivo);
@@ -23,18 +23,74 @@ disp(Dij);
 num_tareas = size(Dij, 1);
 
 %Generar permutacion de n a num_tareas
-%orden = randperm(num_tareas);
-orden = [ 4     1     6     5     7     8     2     3]
+orden = randperm(num_tareas);
+
 %Generamos la primera iteracion
 mejor_solucion = Evaluar(orden,Dij);
 mejor_orden = orden;
-disp('EJECUTANDO ALGORITMO DEL PRIMER MEJOR VECINO');
+
+disp('EJECUTANDO ALGORITMO RECOCIDO SIMULADO');
 disp(['Orden generado aleatoriamente : ', mat2str(orden),' con tiempo : ', mat2str(mejor_solucion)]);
+
+
+T0 = 1000;   %temperatura inicial
+Tf = 0.0000001; %temperatura final
+reduccion = 0.99;  %reduccion de alfa y
+n = length(orden); % Número de tareas
+sol_act = orden;
+e = exp(1);  %para la funcion probabilidad de aceptación de solucion peor  
+L = 100;
+T = T0;
+
+while T >= Tf    %mientras no llegue a la T final
+    
+    i = L;   %calculamos numero iteraciones con L
+    for j = 1:i
+        
+        sol_cand = sol_act;
+        p1 = randi(n); % Genera un número aleatorio entre 1 y 'n' n esel numero de tareas
+        p2 = randi(n); % Genera un número aleatorio entre 1 y 'n' n esel numero de tareas
+        while p1 == p2
+            p1 = randi(n); % Genera un número aleatorio entre 1 y 'n' n esel numero de tareas
+            p2 = randi(n); % Genera un número aleatorio entre 1 y 'n' n esel numero de tareas
+        end
+        A = sol_cand(p1);
+        B = sol_cand(p2);
+        sol_cand(p1) = B;  %cambiamos de posicion 
+        sol_cand(p2) = A;  %cambiamos de posicion
+        
+        delta = Evaluar(sol_cand, Dij) - Evaluar(sol_act, Dij);
+
+        if delta < 0
+            sol_act = sol_cand;
+
+        elseif rand < e^(-delta/T) 
+            sol_act = sol_cand;
+        else
+            sol_act = sol_act;
+        end
+
+    end
+
+T = alfa(T, reduccion);
+
+end
+
+mejor_solucion = Evaluar(sol_act, Dij);
+disp(['La mejor solucion encontrada es el orden : ',mat2str(sol_act),' con tiempo : ' ,num2str(mejor_solucion)]);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                 % APLICAMOS BUSQUEDA LOCAL DEL MEJOR VECINO %
+%Generamos la primera iteracion
+mejor_solucion = Evaluar(sol_act,Dij);
+mejor_orden = sol_act;
+disp('EJECUTANDO ALGORITMO DEL MEJOR VECINO SOBRE SOLUCION ANTERIOR');
+disp(['Orden calculado en recocido : ', mat2str(mejor_orden),' con tiempo : ', mat2str(mejor_solucion)]);
 
 Vecino_mejor_Ecnontrado = true;
 contador = 0;
 contador_vecinos = 0;
-n = length(orden);
+n = length(mejor_orden);
 
 
 while Vecino_mejor_Ecnontrado == true
@@ -54,7 +110,6 @@ while Vecino_mejor_Ecnontrado == true
                 mejor_solucion = solucion;
                 mejor_orden = orden;
                 Vecino_mejor_Ecnontrado = true;
-                continue;
             end
         end
     end
@@ -65,6 +120,9 @@ disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con t
 disp(['Se han explorado ',mat2str(contador),' veces los vecinos', '(Un total de ',mat2str(contador_vecinos), ' vecinos)' ]);
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%% FUNCION EVALUAR %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,5 +146,12 @@ function max_tiempo = Evaluar(orden, Dij)
     max_tiempo = max(tiempos_maquinas);
 end
 
+
+%%%%%%%%%%%%%%    FUNCION ALFA   %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+function resultado = alfa(temperatura, reduccion)
+    resultado = temperatura * reduccion;
+end
 
 

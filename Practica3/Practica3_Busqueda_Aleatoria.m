@@ -36,6 +36,9 @@ num_tareas = size(Dij, 1);
 
 %Generar permutacion de n a num_tareas
 orden = randperm(num_tareas);
+orden_inicial = orden;
+disp(['La solucion inicial es : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
+
 
 %Generamos la primera iteracion
 mejor_solucion = Evaluar(orden,Dij);
@@ -58,7 +61,8 @@ for x = 1:num_iteraciones - 1
 end
 
 
-disp(['La mejor solucion es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
+disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
+disp(['La solucion inicial era : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
 
 
 
