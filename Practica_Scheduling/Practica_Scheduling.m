@@ -63,6 +63,8 @@ function principal()
                 
                 % Pregunta al usuario cuántas iteraciones desea en la búsqueda aleatoria
                 num_iteraciones = input('Por favor, ingrese el número de iteraciones deseadas: ');
+                mostrar = input('Deseas ver la información de cada iteración? Escriba 1 para ver, 0 para no ver: ');
+
                 
                 % Asegúrate de que num_iteraciones sea un número positivo
                 if num_iteraciones <= 0
@@ -77,8 +79,9 @@ function principal()
                 %Generar permutacion de n a num_tareas
                 orden = randperm(num_tareas);
                 orden_inicial = orden;
-                disp(['La solucion inicial es : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
-                
+                if mostrar == 1
+                    disp(['La solucion inicial es : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
+                end
                 
                 %Generamos la primera iteracion
                 mejor_solucion = Evaluar(orden,Dij);
@@ -92,7 +95,9 @@ function principal()
                     orden = randperm(num_tareas);
                     %Generamos la primera iteracion
                     solucion = Evaluar(orden,Dij);
-                    disp(['El tiempo total de la iteracion ', num2str(iteracion) ,' es : ', num2str(solucion), ' con orden : ', mat2str(orden)]);
+                    if mostrar == 1
+                        disp(['El tiempo total de la iteracion ', num2str(iteracion) ,' es : ', num2str(solucion), ' con orden : ', mat2str(orden)]);
+                    end
                     if solucion < mejor_solucion
                         mejor_solucion = solucion;
                         mejor_orden = orden;
@@ -133,6 +138,7 @@ function principal()
                 %Generamos la primera iteracion
                 mejor_solucion = Evaluar(orden,Dij);
                 mejor_orden = orden;
+                orden_inicial = orden;
                 disp(['Orden generado aleatoriamente : ', mat2str(orden),' con tiempo : ', mat2str(mejor_solucion)]);
                 
                 Vecino_mejor_Ecnontrado = true;
@@ -166,6 +172,8 @@ function principal()
                 
                 disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
                 disp(['Se han explorado ',mat2str(contador),' veces los vecinos', '(Un total de ',mat2str(contador_vecinos), ' vecinos)' ]);
+                disp(['La solucion inicial era : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
+
 
             case 3
                 % PRIMER MEJOR VECINO
@@ -194,6 +202,7 @@ function principal()
                 %Generar permutacion de n a num_tareas
                 %orden = randperm(num_tareas);
                 orden = [ 4     1     6     5     7     8     2     3]
+                orden_inicial = orden;
                 %Generamos la primera iteracion
                 mejor_solucion = Evaluar(orden,Dij);
                 mejor_orden = orden;
@@ -231,6 +240,7 @@ function principal()
                 
                 disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
                 disp(['Se han explorado ',mat2str(contador),' veces los vecinos', '(Un total de ',mat2str(contador_vecinos), ' vecinos)' ]);
+                disp(['La solucion inicial era : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
 
 
             case 4
@@ -257,6 +267,7 @@ function principal()
                 
                 %Generar permutacion de n a num_tareas
                 orden = randperm(num_tareas); 
+                orden_inicial = orden;
                 
                 %Generamos la primera iteracion
                 mejor_solucion = Evaluar(orden,Dij);
@@ -354,6 +365,8 @@ function principal()
                 
                 disp(['La mejor solucion encontrada es el orden : ',mat2str(mejor_orden),' con tiempo : ' ,num2str(mejor_solucion)]);
                 disp(['Se han explorado ',mat2str(contador),' veces los vecinos', '(Un total de ',mat2str(contador_vecinos), ' vecinos)' ]);
+                disp(['  ']);
+                disp(['La solucion inicial era : ',mat2str(orden_inicial),' con tiempo : ' ,num2str(Evaluar(orden_inicial,Dij))]);
                 disp(['  ']);
                 if mejor_orden == orden_recocido
                     disp(['El algoritmo de busqueda local no implementa ninguna mejora sobre la solucion del recocido simulado para este caso']);
@@ -637,6 +650,7 @@ function hijo = CompletarHijo(hijo, padre, inicio, fin, num_tareas)
         end
     end
 end
+
 
 
 
