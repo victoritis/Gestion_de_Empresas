@@ -4,7 +4,7 @@ clear;
 %%%%%%%%%%%%%%%%%%%   RECOCIDO SIMULADO   %%%%%%%%%%%%%%%%%%%%%%
 
 % Nombre del archivo de texto que deseas abrir
-nombreArchivo = 'Doc1.txt';
+nombreArchivo = 'Doc3.txt';
 
 % Intenta abrir el archivo en modo de lectura
 fid = dlmread(nombreArchivo);
